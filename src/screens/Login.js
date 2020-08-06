@@ -52,7 +52,7 @@ const theme = {
     roundness : 8,
     colors: {
         primary: "#595959",
-        background : "rgba(255, 255, 255, 0.4)",
+        background : "white",
     }
 }
 
