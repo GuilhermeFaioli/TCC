@@ -6,19 +6,33 @@ import { Picker } from '@react-native-community/picker'
 
 const VaccineRegistration = () => {
     const [date, setDate] = useState(new Date(1598051730000));
+    const [date2, setDate2] = useState(new Date(1598051730000));
+    const [date3, setDate3] = useState(new Date(1598051730000));
+    const [date4, setDate4] = useState(new Date(1598051730000));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     const [lote, setLote] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [address, setAddress] = useState('')
     const [vaccine, setVaccine] = useState('')
     const [dose, setDose] = useState('')
+    const [doseNumber, setDoseNumber] = useState(1)
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === 'ios')
-        setDate(currentDate)
+        switch (doseNumber) {
+            case 1:
+                setDate(currentDate)
+                break;
+            case 2:
+                setDate2(currentDate)
+                break;
+            case 3:
+                setDate3(currentDate)
+                break;
+            case 4:
+                setDate4(currentDate)
+                break;
+        }
     };
 
     const showMode = currentMode => {
@@ -45,7 +59,7 @@ const VaccineRegistration = () => {
 
                 <Picker
                     selectedValue={vaccine}
-                    style={styles.inputStyle,{ height: 50, width: 350 }}
+                    style={styles.inputStyle, { height: 50, width: 350 }}
                     onValueChange={(itemValue, itemIndex) =>
                         setVaccine(itemValue)
                     }>
@@ -72,7 +86,7 @@ const VaccineRegistration = () => {
 
                 <Picker
                     selectedValue={dose}
-                    style={styles.inputStyle,{ height: 50, width: 350 }}
+                    style={styles.inputStyle, { height: 50, width: 350 }}
                     onValueChange={(itemValue, itemIndex) =>
                         setDose(itemValue)
                     }>
@@ -91,17 +105,7 @@ const VaccineRegistration = () => {
                     onChangeText={text => setLote(text)}
                 />
 
-                <TextInput
-                    label="Email"
-                    style={styles.inputStyle}
-                    theme={theme}
-                    keyboardType="email-address"
-                    mode="flat"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                />
-
-                <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={showDatepicker} icon="calendar">Data de nascimento</Button>
+                <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(1); showDatepicker(); }} icon="calendar">Data da Vacina</Button>
 
                 {show && (
                     <DateTimePicker
@@ -114,21 +118,37 @@ const VaccineRegistration = () => {
                     />
                 )}
 
+                {dose == "2 Doses" ?
+                    <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(2); showDatepicker(); }} icon="calendar">Data da Segunda Dose</Button>
+                    : dose == "3 Doses" ?
+                        <View>
+                            <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(2); showDatepicker(); }} icon="calendar">Data da Segunda Dose</Button>
+                            <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(3); showDatepicker(); }} icon="calendar">Data da Terceira Dose</Button>
+                        </View>
+
+                        : dose == "4 Doses" ?
+                            <View>
+                                <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(2); showDatepicker(); }} icon="calendar">Data da Segunda Dose</Button>
+                                <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(3); showDatepicker(); }} icon="calendar">Data da Terceira Dose</Button>
+                                <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={() => { setDoseNumber(4); showDatepicker(); }} icon="calendar">Data da Quarta Dose</Button>
+                            </View>
+
+                            :
+                            console.log("Dose unica")
+                }
+
             </View>
 
             <Button
                 mode="contained"
-                onPress={() => console.log('Pressed')}
+                onPress={() => console.log(date4)}
                 style={styles.buttonStyle}
                 labelStyle={{ fontSize: 16 }}
                 theme={ButtonTheme}
             >
-                Cadastrar
+                Registrar vacina
             </Button>
 
-            <TouchableOpacity style={styles.textView}>
-                <Text style={styles.textStyle}>Já possuo cadastro</Text>
-            </TouchableOpacity>
 
 
         </View>
