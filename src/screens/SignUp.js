@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Image, Text, TouchableOpacity, Modal, Alert } from 'react-native'
+import { View, StyleSheet, Image, Text, TouchableOpacity, Modal, Alert, Platform, KeyboardAvoidingView } from 'react-native'
 import { TextInput, Button } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker'
 const { cloudinaryURL, cloud_name } = require('../keys')
 
-const Login = () => {
+const SignUp = ({ navigation }) => {
     const [date, setDate] = useState(new Date(1598051730000));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -15,6 +15,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [address, setAddress] = useState('')
     const [modal, setModal] = useState(false)
+    const [enableShift, setEnableShift] = useState(false)
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -84,8 +85,33 @@ const Login = () => {
         })
     }
 
+    const sendCred = () => {
+        fetch("http://10.0.2.2:3000/signup", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "email": email,
+                "password": password,
+                "name": name,
+                "Date": date,
+                "address": address,
+                "picture": picture
+            })
+        }).then(res => res.json()).then(async (data) => {
+            try {
+                await AsyncStorage.setItem('token', data.token)
+                navigation.replace("Home")
+            } catch (e) {
+                console.log("Error: " + e)
+            }
+        })
+
+    }
+
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="position" enabled={enableShift}>
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.tinyLogo}
@@ -100,6 +126,7 @@ const Login = () => {
                     theme={theme}
                     mode="flat"
                     value={name}
+                    onFocus={() => setEnableShift(false)}
                     onChangeText={text => setName(text)}
                 />
 
@@ -110,6 +137,7 @@ const Login = () => {
                     keyboardType="email-address"
                     mode="flat"
                     value={email}
+                    onFocus={() => setEnableShift(false)}
                     onChangeText={text => setEmail(text)}
                 />
 
@@ -121,6 +149,7 @@ const Login = () => {
                     multiline={true}
                     mode="flat"
                     value={password}
+                    onFocus={() => setEnableShift(false)}
                     onChangeText={text => setPassword(text)}
                 />
 
@@ -131,6 +160,7 @@ const Login = () => {
                     mode="flat"
                     value={address}
                     onChangeText={text => setAddress(text)}
+                    onFocus={() => setEnableShift(false)}
                 />
 
                 <Button mode="contained" style={styles.inputStyle} theme={ButtonTheme} onPress={showDatepicker} icon="calendar">Data de nascimento</Button>
@@ -154,7 +184,7 @@ const Login = () => {
 
             <Button
                 mode="contained"
-                onPress={() => console.log('Pressed')}
+                onPress={() => sendCred()}
                 style={styles.buttonStyle}
                 labelStyle={{ fontSize: 16 }}
                 theme={ButtonTheme}
@@ -162,7 +192,7 @@ const Login = () => {
                 Cadastrar
             </Button>
 
-            <TouchableOpacity style={styles.textView}>
+            <TouchableOpacity style={styles.textView} onPress={() => navigation.replace("Login")}>
                 <Text style={styles.textStyle}>Já possuo cadastro</Text>
             </TouchableOpacity>
 
@@ -189,7 +219,7 @@ const Login = () => {
                 </View>
             </Modal>
 
-        </View>
+        </KeyboardAvoidingView>
     )
 
 }
@@ -211,6 +241,7 @@ const ButtonTheme = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#6EB4EF"
     },
     imageContainer: {
         alignItems: "center",
@@ -253,4 +284,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Login
+export default SignUp

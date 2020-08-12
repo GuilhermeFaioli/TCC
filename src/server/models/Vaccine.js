@@ -17,6 +17,10 @@ const VaccineSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    userID: {
+        type: String,
+        required:true
+    },
     date2: String,
     date3: String,
     date4: String

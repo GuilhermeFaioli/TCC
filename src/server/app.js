@@ -48,6 +48,7 @@ app.post('/send-data', (req, res) => {
         dose: req.body.dose,
         lote: req.body.lote,
         date: req.body.date,
+        userID: req.body.userID,
         date2: req.body.date2,
         date3: req.body.date3,
         date4: req.body.date4
@@ -76,6 +77,7 @@ app.post('/update', (req, res) => {
         dose: req.body.dose,
         lote: req.body.lote,
         date: req.body.date,
+        userID: req.body.userID,
         date2: req.body.date2,
         date3: req.body.date3,
         date4: req.body.date4

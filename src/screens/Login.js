@@ -1,10 +1,38 @@
-import React from 'react'
-import { View, StyleSheet, Image, Text, TouchableOpacity   } from 'react-native'
+import React, { useState } from 'react'
+import { View, StyleSheet, Image, Text, TouchableOpacity, KeyboardAvoidingView, Alert  } from 'react-native'
 import { TextInput, Button } from 'react-native-paper';
+import AsyncStorage from '@react-native-community/async-storage'
 
-const Login = () => {
+const Login = ({ navigation }) => {
+
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [enableShift, setEnableShift] = useState(false)
+
+    const sendCred = () => {
+        fetch("http://10.0.2.2:3000/signin", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "email": email,
+                "password": password
+            })
+        }).then(res => res.json()).then(async data => {
+            try {
+                await AsyncStorage.setItem('token', data.token)
+                navigation.replace("Home")
+            } catch (e) {
+                console.log("Error: " + e)
+                Alert.alert("Email ou senha incorreto")
+            }
+        })
+
+    }
+
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="position" enabled={enableShift}>
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.tinyLogo}
@@ -18,6 +46,9 @@ const Login = () => {
                 theme={theme}
                 keyboardType="email-address"
                 mode="flat"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                onFocus={() => setEnableShift(false)}
                 />
 
                 <TextInput
@@ -26,12 +57,15 @@ const Login = () => {
                     theme={theme}
                     secureTextEntry={true}
                     mode="flat"
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                    onFocus={() => setEnableShift(false)}
                 />  
             </View>
 
             <Button
                 mode="contained"
-                onPress={() => console.log('Pressed')}
+                onPress={() => sendCred()}
                 style={styles.buttonStyle}
                 labelStyle={{fontSize: 16}}
                 theme={ButtonTheme}
@@ -39,11 +73,11 @@ const Login = () => {
                 Entrar
             </Button>
 
-            <TouchableOpacity  style={styles.textView}>
+            <TouchableOpacity  style={styles.textView} onPress={() => navigation.replace("CreateAccount")}>
                 <Text style={styles.textStyle}>Não sou cadastrado</Text>
             </TouchableOpacity>
             
-        </View>
+        </KeyboardAvoidingView>
     )
     
 }
@@ -65,6 +99,7 @@ const ButtonTheme = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#6EB4EF"
     },
     imageContainer: {
         alignItems: "center",
