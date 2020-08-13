@@ -1,67 +1,62 @@
-import React from 'react'
-import { View, StyleSheet, Image, FlatList, Text, Dimensions } from 'react-native'
-import { Card, Title, Paragraph, FAB } from 'react-native-paper'
+import React, { useEffect, useContext } from 'react'
+import { View, StyleSheet, Image, FlatList, Dimensions } from 'react-native'
+import { Card, Title, Paragraph, FAB, Button } from 'react-native-paper'
+import AsyncStorage from '@react-native-community/async-storage'
+import { MyContext } from '../../App'
 
 const Width = Dimensions.get('window').width
-const data = [
-    {
-        _id: 1,
-        nome: "Vacina 1",
-        data: "01/01/2021",
-        val: "01/01/2022",
-        lote: "168VF00372"
-    },
-    {
-        _id: 2,
-        nome: "Vacina 2",
-        data: "01/02/2021",
-        val: "01/02/2022",
-        lote: "169VF00373"
-    },
-    {
-        _id: 3,
-        nome: "Vacina 3",
-        data: "01/02/2021",
-        val: "01/02/2022",
-        lote: "169VF00373"
-    },
-    {
-        _id: 4,
-        nome: "Vacina 4",
-        data: "01/02/2021",
-        val: "01/02/2022",
-        lote: "169VF00373"
-    },
-    {
-        _id: 5,
-        nome: "Vacina 5",
-        data: "01/02/2021",
-        val: "01/02/2022",
-        lote: "169VF00373"
-    }
-]
 
-const Home = () => {
+const Home = ({ navigation }) => {
+    const { state, dispatch } = useContext(MyContext)
+    const { data, loading } = state
+
+    const logout = () => {
+        AsyncStorage.removeItem("token").then(() => {
+            navigation.replace("Login")
+        })
+    }
+
+    const fetchData = async () => {
+        const token = await AsyncStorage.getItem("token")
+        fetch("http://10.0.2.2:3000/", {
+            headers: new Headers({
+                Authorization: "Bearer " + token
+            })
+        }).then(res => res.json()).then(results => {
+
+            //forma de passar dados sem redux
+            // setData(results)
+            // setLoading(false)
+
+            dispatch({ type: "ADD_DATA", payload: results })
+            dispatch({ type: "SET_LOADING", payload: false })
+        }).catch(err => {
+            Alert.alert("someting went wrong")
+        })
+    }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchData()
+        });
+        return unsubscribe
+    }, [navigation])
 
     const renderList = ((item) => {
         return (
-            <View style={styles.cardView}>
-                <Card style={styles.myCard}>
+            <Card style={styles.myCard} onPress={() => navigation.navigate("Vaccine", { item })}>
                 <View>
-                    <View style={{ marginVertical: 10, marginHorizontal: 10}}>
+                    <View style={{ marginVertical: 10, marginHorizontal: 0 }}>
                         <Card.Content>
                             <Title style={styles.text}>{item.nome}</Title>
-                            <Paragraph style={styles.text}>Data:</Paragraph>
-                            <Paragraph style={styles.text}>{item.data}</Paragraph>
-                            <Paragraph style={styles.text}>Validade:</Paragraph>
-                            <Paragraph style={styles.text}>{item.val}</Paragraph>
-                            <Paragraph style={styles.text}>Lote:</Paragraph>
-                            <Paragraph style={styles.text}>{item.lote}</Paragraph>
+                            <Paragraph style={styles.text}>Data: {item.date}</Paragraph>
+                            <Paragraph style={styles.text}>Dose: {item.dose}</Paragraph>
+                            <Paragraph style={styles.text}>Lote: {item.lote}</Paragraph>
                         </Card.Content>
                     </View>
                 </View>
             </Card>
-            </View>
+
         )
     })
 
@@ -73,15 +68,7 @@ const Home = () => {
                     source={require('../../assets/logo.png')}
                 />
             </View>
-            <View style={styles.statusView}>
-                <Card style={styles.cardStyle}>
-                    <Card.Title title="Data da proxima dose a ser tomada" />
-                    <Card.Content>
-                        <Title>Vacina 1</Title>
-                        <Paragraph>Data: 01/01/2021</Paragraph>
-                    </Card.Content>
-                </Card>
-            </View>
+
             <View style={styles.flatListView}>
                 <FlatList
                     data={data}
@@ -89,26 +76,38 @@ const Home = () => {
                         return renderList(item)
                     }}
                     keyExtractor={item => `${item._id}`}
+                    onRefresh={() => fetchData()}
                     numColumns={2}
+                    refreshing={loading}
                 />
             </View>
-            
+
+            <Button mode="contained" theme={ButtonTheme} onPress={() => logout()}>
+                Sair
+            </Button>
+
             <FAB
                 style={styles.fab}
                 small={false}
                 icon="plus"
                 theme={{ colors: { accent: "#006aff" } }}
-                //onPress={() => navigation.navigate("Create")}
-            //props.navigation.navigate("Create") o navigation foi desestruturado das props
+                onPress={() => navigation.navigate("Create")}
             />
 
         </View>
     )
 }
 
+const ButtonTheme = {
+    colors: {
+        primary: "#0066FF",
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#6EB4EF"
     },
     imageContainer: {
         alignItems: "center",
@@ -119,34 +118,26 @@ const styles = StyleSheet.create({
         height: 64,
         marginTop: 16
     },
-    statusView: {
-        marginTop: 8,
-        flex: 1,
-        flexDirection: "column"
-    },
-    cardStyle: {
-        backgroundColor: "#C3E8B6"
-    },
     myCard: {
-        height: Width/2
-    },
-    cardView: {
-        flex: 2,
-        flexDirection: "row",
-        paddingVertical: 10,
-        justifyContent: "center"
+        height: Width/2,
+        width: Width/2.6,
+        margin: 4,
     },
     text: {
         fontSize: 20,
     },
     flatListView: {
-        flex: 4
+        paddingVertical: 10,
+        flexDirection: "row",
+        flex: 4,
+        marginTop: 16,
+        marginLeft: "9%"
     },
     fab: {
         position: 'absolute',
         margin: 16,
         right: 0,
-        bottom: 8,
+        bottom: 30,
     }
 })
 
