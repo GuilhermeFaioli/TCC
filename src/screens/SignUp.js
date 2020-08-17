@@ -206,11 +206,11 @@ const SignUp = ({ navigation }) => {
                     <View style={styles.modalButtonView}>
                         <Button icon="camera" mode="contained" theme={ButtonTheme} onPress={() => pickFromCamera()}>
                             Camera
-                                </Button>
+                        </Button>
 
                         <Button icon="image-area" mode="contained" theme={ButtonTheme} onPress={() => pickFromGallery()}>
                             Gallery
-                                </Button>
+                        </Button>
                     </View>
 
                     <Button theme={theme} onPress={() => setModal(false)}>

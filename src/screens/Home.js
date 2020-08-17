@@ -48,10 +48,9 @@ const Home = ({ navigation }) => {
                 <View>
                     <View style={{ marginVertical: 10, marginHorizontal: 0 }}>
                         <Card.Content>
-                            <Title style={styles.text}>{item.nome}</Title>
+                            <Title style={styles.text}>{item.vacina}</Title>
                             <Paragraph style={styles.text}>Data: {item.date}</Paragraph>
                             <Paragraph style={styles.text}>Dose: {item.dose}</Paragraph>
-                            <Paragraph style={styles.text}>Lote: {item.lote}</Paragraph>
                         </Card.Content>
                     </View>
                 </View>
@@ -119,8 +118,8 @@ const styles = StyleSheet.create({
         marginTop: 16
     },
     myCard: {
-        height: Width/2,
-        width: Width/2.6,
+        height: Width/1.8,
+        width: Width/2.1,
         margin: 4,
     },
     text: {
@@ -131,7 +130,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flex: 4,
         marginTop: 16,
-        marginLeft: "9%"
+        marginLeft: "0.5%"
     },
     fab: {
         position: 'absolute',

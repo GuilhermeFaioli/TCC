@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Image, Text, TouchableOpacity, Modal, Alert } from 'react-native'
+import { View, StyleSheet, Image, Alert } from 'react-native'
 import { TextInput, Button, Title } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { Picker } from '@react-native-community/picker'
@@ -26,7 +26,7 @@ const VaccineRegistration = ({ navigation, route }) => {
                     return route.params.lote
                     break
                 case "vaccine":
-                    return route.params.vaccine
+                    return route.params.vacina
                     break
                 case "dose":
                     return route.params.dose
@@ -255,9 +255,6 @@ const VaccineRegistration = ({ navigation, route }) => {
                     Registrar vacina
                         </Button>
             }
-
-
-
         </View>
     )
 
