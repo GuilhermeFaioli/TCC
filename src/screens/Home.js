@@ -1,27 +1,58 @@
-import React, { useEffect, useContext } from 'react'
-import { View, StyleSheet, Image, FlatList, Dimensions } from 'react-native'
+import React, { useEffect, useContext, useState } from 'react'
+import { View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert } from 'react-native'
 import { Card, Title, Paragraph, FAB, Button } from 'react-native-paper'
 import AsyncStorage from '@react-native-community/async-storage'
 import { MyContext } from '../../App'
+import { color } from 'react-native-reanimated'
 
 const Width = Dimensions.get('window').width
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation }) => {  
+
+    const fetchID = async () => {
+        const token = await AsyncStorage.getItem("token")
+        fetch("http://10.0.2.2:3000/auth", {
+            headers: new Headers({
+                Authorization: "Bearer " + token
+            })
+        }).then(res => res.json()).then(async data => {
+            try {
+                await AsyncStorage.setItem('id', data.id)
+            } catch (e) {
+                console.log("Error: " + e)
+                Alert.alert("Algo deu errado com id do usuario1")
+            }
+    
+        }).catch(err => {
+            Alert.alert("Algo deu errado com id do usuario2")
+        })
+    }
+
+    navigation.setOptions({
+        headerRight: () => (
+          <Button icon="logout" theme={Buttonlogout} onPress={() => logout()}>Logout
+          </Button>
+        ),
+      });
+
     const { state, dispatch } = useContext(MyContext)
     const { data, loading } = state
 
     const logout = () => {
-        AsyncStorage.removeItem("token").then(() => {
-            navigation.replace("Login")
+        AsyncStorage.removeItem("id").then(() => {
+            AsyncStorage.removeItem("token").then(() => {
+                navigation.replace("Login")
+            })
         })
     }
 
     const fetchData = async () => {
         const token = await AsyncStorage.getItem("token")
-        fetch("http://10.0.2.2:3000/", {
+        const id = await AsyncStorage.getItem("id")
+        fetch("http://10.0.2.2:3000/?id="+id,  {
             headers: new Headers({
-                Authorization: "Bearer " + token
-            })
+                Authorization: "Bearer " + token,
+            }),
         }).then(res => res.json()).then(results => {
 
             //forma de passar dados sem redux
@@ -31,42 +62,51 @@ const Home = ({ navigation }) => {
             dispatch({ type: "ADD_DATA", payload: results })
             dispatch({ type: "SET_LOADING", payload: false })
         }).catch(err => {
+            console.log(err)
             Alert.alert("someting went wrong")
         })
     }
 
     useEffect(() => {
+        fetchID()
         const unsubscribe = navigation.addListener('focus', () => {
             fetchData()
         });
         return unsubscribe
     }, [navigation])
 
+    const formateDate = (dateString) => {
+        let aux = ''
+        let arrAux
+        aux = dateString.split('-')
+        aux = aux.join('/')
+        aux = aux.split('T')[0]
+        return aux.split('/')[2]+'/'+aux.split('/')[1]+'/'+aux.split('/')[0]
+    }
+    
+    
+
     const renderList = ((item) => {
         return (
-            <Card style={styles.myCard} onPress={() => navigation.navigate("Vaccine", { item })}>
+            <TouchableOpacity style={styles.myCard} onPress={() => navigation.navigate("Vaccine", { item })}>
                 <View>
                     <View style={{ marginVertical: 10, marginHorizontal: 0 }}>
                         <Card.Content>
-                            <Title style={styles.text}>{item.vacina}</Title>
-                            <Paragraph style={styles.text}>Data: {item.date}</Paragraph>
-                            <Paragraph style={styles.text}>Dose: {item.dose}</Paragraph>
+                            <Title style={styles.textSubtitle}>{item.vacina}</Title>
+                            <Paragraph style={styles.textSubtitle}>Data:</Paragraph>
+                            <Paragraph style={styles.text}>{formateDate(item.date)}</Paragraph>
+                            <Paragraph style={styles.textSubtitle}>Dose:</Paragraph>
+                            <Paragraph style={styles.text}>{item.dose}</Paragraph>
                         </Card.Content>
                     </View>
                 </View>
-            </Card>
+            </TouchableOpacity>
 
         )
     })
 
     return (
         <View style={styles.container}>
-            <View style={styles.imageContainer}>
-                <Image
-                    style={styles.tinyLogo}
-                    source={require('../../assets/logo.png')}
-                />
-            </View>
 
             <View style={styles.flatListView}>
                 <FlatList
@@ -75,15 +115,11 @@ const Home = ({ navigation }) => {
                         return renderList(item)
                     }}
                     keyExtractor={item => `${item._id}`}
-                    onRefresh={() => fetchData()}
+                    onRefresh={() => {fetchData(); fetchID();}}
                     numColumns={2}
                     refreshing={loading}
                 />
             </View>
-
-            <Button mode="contained" theme={ButtonTheme} onPress={() => logout()}>
-                Sair
-            </Button>
 
             <FAB
                 style={styles.fab}
@@ -103,27 +139,47 @@ const ButtonTheme = {
     }
 }
 
+const Buttonlogout = {
+    colors: {
+        primary: "white",
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#6EB4EF"
-    },
-    imageContainer: {
-        alignItems: "center",
-    },
-    tinyLogo: {
-        alignItems: "center",
-        width: 64,
-        height: 64,
-        marginTop: 16
+        padding: 8
     },
     myCard: {
+        backgroundColor: "white",
         height: Width/1.8,
-        width: Width/2.1,
+        width: Width/2.2,
         margin: 4,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        borderRadius: 8
+    },
+    textTitle: {
+        fontSize: 20,
+        padding: 4,
+        fontWeight: "bold",
+        color: "#000000"
+    },
+    textSubtitle: {
+        fontSize: 20,
+        padding: 4,
+        color: "#000000"
     },
     text: {
         fontSize: 20,
+        padding: 4,
+        color: "#3D3D3D"
     },
     flatListView: {
         paddingVertical: 10,
@@ -137,7 +193,7 @@ const styles = StyleSheet.create({
         margin: 16,
         right: 0,
         bottom: 30,
-    }
+    },
 })
 
 export default Home

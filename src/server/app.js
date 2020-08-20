@@ -31,7 +31,8 @@ mongoose.connection.on("error", (err) => {
 mongoose.set('useFindAndModify', false);
 
 app.get('/', requireToken, (req, res) => {
-    Vaccine.find({}).then(data => {
+    console.log(req.query.id)
+    Vaccine.find({userID: req.query.id}).then(data => {
         res.send(data)
     }).catch(err => {
         console.log(err)

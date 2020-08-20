@@ -9,6 +9,15 @@ const Vaccine = (props) => {
     const [modal, setModal] = useState(false)
     const { _id, vacina, dose, lote, date, userID, date2, date3, date4 } = props.route.params.item
 
+    const formateDate = (dateString) => {
+        let aux = ''
+        let arrAux
+        aux = dateString.split('-')
+        aux = aux.join('/')
+        aux = aux.split('T')[0]
+        return aux.split('/')[2]+'/'+aux.split('/')[1]+'/'+aux.split('/')[0]
+    }
+
     const deleteVaccine = () => {
         fetch("http://10.0.2.2:3000/delete", {
             method: "post",
@@ -44,36 +53,36 @@ const Vaccine = (props) => {
                         {dose == "2 Doses" ?
                             <View>
                                 <Paragraph style={styles.textBold}>Data:</Paragraph>
-                                <Paragraph style={styles.text}>{date}</Paragraph>
+                                <Paragraph style={styles.text}>{formateDate(date)}</Paragraph>
                                 <Paragraph style={styles.textBold}>Data 2° dose:</Paragraph>
-                                <Paragraph style={styles.text}>{date2}</Paragraph>
+                                <Paragraph style={styles.text}>{formateDate(date2)}</Paragraph>
                             </View>
                             : dose == "3 Doses" ?
                                 <View>
                                     <Paragraph style={styles.textBold}>Data:</Paragraph>
-                                    <Paragraph style={styles.text}>{date}</Paragraph>
+                                    <Paragraph style={styles.text}>{formateDate(date)}</Paragraph>
                                     <Paragraph style={styles.textBold}>Data 2° dose:</Paragraph>
-                                    <Paragraph style={styles.text}>{date2}</Paragraph>
+                                    <Paragraph style={styles.text}>{formateDate(date2)}</Paragraph>
                                     <Paragraph style={styles.textBold}>Data 3° dose:</Paragraph>
-                                    <Paragraph style={styles.text}>{date3}</Paragraph>
+                                    <Paragraph style={styles.text}>{formateDate(date3)}</Paragraph>
                                 </View>
 
                                 : dose == "4 Doses" ?
                                     <View>
                                         <Paragraph style={styles.textBold}>Data:</Paragraph>
-                                        <Paragraph style={styles.text}>{date}</Paragraph>
+                                        <Paragraph style={styles.text}>{formateDate(date)}</Paragraph>
                                         <Paragraph style={styles.textBold}>Data 2° dose:</Paragraph>
-                                        <Paragraph style={styles.text}>{date2}</Paragraph>
+                                        <Paragraph style={styles.text}>{formateDate(date2)}</Paragraph>
                                         <Paragraph style={styles.textBold}>Data 3° dose:</Paragraph>
-                                        <Paragraph style={styles.text}>{date3}</Paragraph>
+                                        <Paragraph style={styles.text}>{formateDate(date3)}</Paragraph>
                                         <Paragraph style={styles.textBold}>Data 4° dose:</Paragraph>
-                                        <Paragraph style={styles.text}>{date4}</Paragraph>
+                                        <Paragraph style={styles.text}>{formateDate(date4)}</Paragraph>
                                     </View>
 
                                     :
                                     <View>
                                         <Paragraph style={styles.textBold}>Data:</Paragraph>
-                                        <Paragraph style={styles.text}>{date}</Paragraph>
+                                        <Paragraph style={styles.text}>{formateDate(date)}</Paragraph>
                                     </View>
                         }
 
