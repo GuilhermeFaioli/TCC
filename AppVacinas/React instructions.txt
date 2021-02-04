@@ -1,0 +1,28 @@
+ npm init > npm install express body-parser mongoose/ cria os arquivos para o server
+nodemon *(nome do arquivo do server sem aspas e sem .js)* /inicia o server
+npm start / inicia o expo
+emulator -list-avds / listar emuladores
+emulator -avd Expo / rodar emulador
+ngrok http 3000
+
+OBS:
+
+Usar card do react native paper: para mostrar o banco de dados do app de vacinas
+
+
+imports usados no react {
+	react native paper
+	express
+	bodyParser
+	mongoose
+	jsonwebtoken
+	bcrypt
+	react navigation
+}
+
+https://www.youtube.com/watch?v=Xg6fm5guB8g&list=PLB97yPrFwo5hMR8znwt0NqgmmqzoPemnT&index=5 
+
+--
+https://www.youtube.com/watch?v=SQY9TDHgI18&list=PLB97yPrFwo5hZGcsD7Ac9rNPidDWjp79A&index=4 / Aula 13
+19:50
+
