@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, Component } from "react";
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  Text,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -34,7 +35,6 @@ const CountDownTimer = ({ navigation }) => {
       })
       .catch((err) => {
         console.log(err);
-        Alert.alert("someting went wrong");
       });
   };
 

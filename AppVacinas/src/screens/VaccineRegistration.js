@@ -63,7 +63,7 @@ const VaccineRegistration = ({ navigation, route }) => {
         setID(data.id);
       })
       .catch((err) => {
-        Alert.alert("someting went wrong with userID");
+        console.log(err);
       });
   };
 
@@ -160,7 +160,8 @@ const VaccineRegistration = ({ navigation, route }) => {
         navigation.navigate("Home");
       })
       .catch((err) => {
-        Alert.alert("someting went wrong");
+        Alert.alert("Certifique se que todos os dados foram preenchidos");
+        console.log(err);
       });
   };
 
@@ -188,7 +189,7 @@ const VaccineRegistration = ({ navigation, route }) => {
         navigation.navigate("Home");
       })
       .catch((err) => {
-        Alert.alert("someting went wrong");
+        Alert.alert("something went wrong");
       });
   };
 
@@ -262,6 +263,7 @@ const VaccineRegistration = ({ navigation, route }) => {
         <TextInput
           label="Lote"
           theme={theme}
+          maxLength={20}
           style={styles.inputStyle}
           mode="flat"
           value={lote}
@@ -505,13 +507,13 @@ async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
+      console.log("Failed to get push token for push notification!");
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
     console.log(token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    console.log("Must use physical device for Push Notifications");
   }
 
   if (Platform.OS === "android") {

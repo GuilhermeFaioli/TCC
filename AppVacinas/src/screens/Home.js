@@ -74,7 +74,6 @@ const Home = ({ navigation }) => {
       })
       .catch((err) => {
         console.log(err);
-        Alert.alert("someting went wrong");
       });
   };
 
@@ -83,7 +82,7 @@ const Home = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       setTimeout(() => {
         fetchData();
-      }, 300);
+      }, 1000);
     });
     return unsubscribe;
   }, [navigation]);
